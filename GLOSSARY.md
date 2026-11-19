@@ -25,8 +25,8 @@ The Sidebar view showing the Project's file tree.
 _Avoid_: file browser, explorer
 
 **Changes View**:
-The Sidebar view listing files with unstaged changes; selecting one opens it in the diff viewer.
-_Avoid_: git panel, git status
+The Sidebar view listing changed files (staged, unstaged, and untracked, each with a distinguishing status icon); selecting one opens it in the diff viewer. Not filtered to unstaged-only — neo-tree's `git_status` source shows all of them together, so "which files have unstaged changes" is answered by the icon, not by the list's membership.
+_Avoid_: git panel, git status, unstaged-changes list
 
 **Chrome Navigation Mode**:
 The toggle between vim-style and conventional (arrow-key/mouse) keybindings for UI chrome — Sidebar, terminal, panes, window management. Never affects text editing itself, which stays modal regardless, since that's inherent to Neovim.

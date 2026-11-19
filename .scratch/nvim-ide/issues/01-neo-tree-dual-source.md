@@ -1,5 +1,5 @@
 Type: research
-Status: open
+Status: resolved
 
 ## Question
 
@@ -12,3 +12,9 @@ Verify against current neo-tree.nvim documentation/source:
 - Any known current limitations or maintenance-status concerns worth flagging before this becomes a locked spec decision.
 
 Report findings with enough detail (exact config keys, command names) that the spec can cite them directly, and flag anything that contradicts ADR-0003's premise.
+
+## Answer
+
+Confirmed: neo-tree.nvim's source-switching is built-in and documented — `:Neotree action=focus source=<filesystem|git_status> position=left` (or the `source_selector` winbar widget) swaps the same persistent sidebar window's content, exactly as ADR-0003 assumes. Partially contradicted: the diffview.nvim hook is *not* a first-class, shipped integration in either plugin — it's achievable only via custom Lua glue (overriding `git_status.window.mappings["<cr>"]` with a `commands` entry that calls `:DiffviewOpen -- <path>`), so the ADR/spec should describe it as custom glue to build and maintain, not a built-in feature. New nuance: the `git_status` source shows *all* changed files (staged + unstaged + untracked) in one list with per-file stage icons, with no built-in filter for "unstaged only" — an open upstream issue (#1031) even flags the underlying data shape as due for a rework — so "Changes View" as unstaged-only will need either a loosened definition or custom filtering. The project is actively maintained, but `git_status`/`<cr>`-mapping behavior has a history of regressions during filesystem-focused refactors, so pin a specific neo-tree version.
+
+Full findings (citations, exact config): `.scratch/nvim-ide/research/01-neo-tree-dual-source.md` on the (unmerged, local-only) `research/neo-tree-dual-source` branch.

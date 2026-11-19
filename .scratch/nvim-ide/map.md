@@ -16,12 +16,13 @@ A written spec for **nvim-ide**: a personal terminal-based IDE built as a Neovim
 
 ## Decisions so far
 
-(none yet — charting-phase decisions live in `GLOSSARY.md` and `docs/adr/`, not here)
+- [neo-tree dual-source sidebar research](issues/01-neo-tree-dual-source.md): confirmed — source-switching is built-in to neo-tree.nvim; but corrected ADR-0003 — the git_status-click-opens-diffview wiring is custom glue, not a shipped integration, and `git_status` shows all changed files (not unstaged-only), which narrowed the `Changes View` glossary definition.
+- [LSP baseline language mappings research](issues/03-lsp-baseline-languages.md): Mason/lspconfig names confirmed for all five languages (`lua_ls`, `ts_ls`, `pyright`, `jdtls`, `terraformls`); jdtls needs materially more setup (nvim-jdtls plugin, per-project workspace, Java 21 runtime) — spec should scope baseline Java to bare-lspconfig only and defer debug/test tooling.
 
 ## Not yet specified
 
 - Whether Chrome Navigation Mode's window/pane-navigation keys should mirror the user's existing `~/.tmux.conf` bindings for muscle-memory consistency — not raised yet; sharpness depends on how much tmux is used alongside nvim-ide day to day.
-- Exact empty/edge-case behavior of the Changes View (no unstaged changes, merge conflicts, untracked-only files) — depends on what the neo-tree `git_status` research below finds is actually possible.
+- True empty-state behavior of the Changes View (zero changed files, merge-conflict state) — ticket 01 confirmed `git_status` shows all changed files with status icons and no unstaged-only filter, but didn't cover what renders when there's nothing to show or a conflict is active.
 
 ## Out of scope
 
