@@ -18,6 +18,7 @@ A written spec for **nvim-ide**: a personal terminal-based IDE built as a Neovim
 
 - [neo-tree dual-source sidebar research](issues/01-neo-tree-dual-source.md): confirmed — source-switching is built-in to neo-tree.nvim; but corrected ADR-0003 — the git_status-click-opens-diffview wiring is custom glue, not a shipped integration, and `git_status` shows all changed files (not unstaged-only), which narrowed the `Changes View` glossary definition.
 - [LSP baseline language mappings research](issues/03-lsp-baseline-languages.md): Mason/lspconfig names confirmed for all five languages (`lua_ls`, `ts_ls`, `pyright`, `jdtls`, `terraformls`); jdtls needs materially more setup (nvim-jdtls plugin, per-project workspace, Java 21 runtime) — spec should scope baseline Java to bare-lspconfig only and defer debug/test tooling.
+- [Cross-platform bootstrap research](issues/02-cross-platform-bootstrap.md): first launch is just `nvim` once (lazy.nvim's `install_missing()` honors `lazy-lock.json` automatically — never run `:Lazy sync` first, it overwrites the lockfile); treesitter parsers and Mason binaries self-install separately and are never synced between machines; bare Linux boxes usually lack a C compiler for treesitter, so install the portable `zig` binary rather than `build-essential` (see new task ticket 07).
 
 ## Not yet specified
 
