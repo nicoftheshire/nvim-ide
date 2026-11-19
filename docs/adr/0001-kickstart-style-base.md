@@ -1,0 +1,3 @@
+# Start from a kickstart.nvim-style minimal config, not a full distro
+
+We're building a highly custom shell (single dual-source Sidebar, project switcher, specific keymap scheme) on top of Neovim. A batteries-included distro (LazyVim, NvChad, AstroNvim) ships its own UI opinions — statusline, bufferline, default sidebar plugin, keymap scheme — that we'd have to fight or rip out to fit our own layout. A minimal starting config (the kickstart.nvim style: a small, readable init wiring up a plugin manager, LSP, and treesitter, with no opinionated UI) gives us the plumbing without the opinions, at the cost of writing more of the custom shell ourselves.

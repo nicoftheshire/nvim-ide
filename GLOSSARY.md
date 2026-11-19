@@ -1,0 +1,37 @@
+# nvim-ide
+
+A personal terminal-based IDE built as a Neovim configuration: a custom shell (sidebar, terminal, project switching) layered over Neovim's editing core.
+
+## Language
+
+**Project**:
+A directory the IDE treats as a unit of work, tracked in the Known Projects List and given its own persisted Session.
+_Avoid_: workspace, directory, repo
+
+**Known Projects List**:
+The persisted list of Projects available through the project switcher, independent of which one is currently open. Entries are added automatically when a new directory is opened and removed explicitly by the user.
+_Avoid_: project history, recents
+
+**Session**:
+The persisted per-Project state restored when switching back to it: open buffers, tabs, and window layout. Does not include terminal scrollback, which is never persisted.
+_Avoid_: workspace state, project state
+
+**Sidebar**:
+The single togglable panel on the left that shows exactly one of two views at a time: the Tree View or the Changes View.
+_Avoid_: file browser, git panel (neither names the fact it's one slot, not two)
+
+**Tree View**:
+The Sidebar view showing the Project's file tree.
+_Avoid_: file browser, explorer
+
+**Changes View**:
+The Sidebar view listing files with unstaged changes; selecting one opens it in the diff viewer.
+_Avoid_: git panel, git status
+
+**Chrome Navigation Mode**:
+The toggle between vim-style and conventional (arrow-key/mouse) keybindings for UI chrome — Sidebar, terminal, panes, window management. Never affects text editing itself, which stays modal regardless, since that's inherent to Neovim.
+_Avoid_: vim mode (ambiguous with text-editing modality)
+
+**Startup Budget**:
+The constraint that Neovim's own cold start, before any LSP client attaches, stays under 100ms as measured by `nvim --startuptime`. Excludes per-language LSP attach time.
+_Avoid_: lightweight (too vague to check against)

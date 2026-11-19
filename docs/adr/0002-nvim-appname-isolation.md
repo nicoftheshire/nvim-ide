@@ -1,0 +1,3 @@
+# Isolate the config under NVIM_APPNAME instead of the default ~/.config/nvim
+
+The repo root is the config root directly (no separate installer), placed or symlinked at `~/.config/nvim-ide` with `NVIM_APPNAME=nvim-ide` exported in the shell profile on every machine, rather than claiming the default `~/.config/nvim`. This keeps `nvim .` working unchanged, gives a single self-contained folder to copy to the Linux box, and leaves the default Neovim config slot free should a plain, non-IDE Neovim ever be wanted alongside it. The cost is a one-line shell profile dependency that must be set up on each new machine.

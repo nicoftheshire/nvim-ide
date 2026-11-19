@@ -1,0 +1,3 @@
+# Sidebar is one dual-source panel, not two always-visible panels
+
+The IDE has one Sidebar slot on the left that toggles between the Tree View and the Changes View (both backed by neo-tree.nvim's `filesystem` and `git_status` sources), rather than two simultaneously visible panels. This trades always-seeing-changed-files for more vertical space per view and a single plugin owning the whole slot (keymaps, rendering, selection-to-diffview wiring) instead of two. A reader following the original requirement wording ("file browser bar" and "git section" as separate bullets) would reasonably expect two panels, so this is worth flagging as a deliberate choice, not an oversight.
