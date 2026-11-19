@@ -19,11 +19,11 @@ A written spec for **nvim-ide**: a personal terminal-based IDE built as a Neovim
 - [neo-tree dual-source sidebar research](issues/01-neo-tree-dual-source.md): confirmed — source-switching is built-in to neo-tree.nvim; but corrected ADR-0003 — the git_status-click-opens-diffview wiring is custom glue, not a shipped integration, and `git_status` shows all changed files (not unstaged-only), which narrowed the `Changes View` glossary definition.
 - [LSP baseline language mappings research](issues/03-lsp-baseline-languages.md): Mason/lspconfig names confirmed for all five languages (`lua_ls`, `ts_ls`, `pyright`, `jdtls`, `terraformls`); jdtls needs materially more setup (nvim-jdtls plugin, per-project workspace, Java 21 runtime) — spec should scope baseline Java to bare-lspconfig only and defer debug/test tooling.
 - [Cross-platform bootstrap research](issues/02-cross-platform-bootstrap.md): first launch is just `nvim` once (lazy.nvim's `install_missing()` honors `lazy-lock.json` automatically — never run `:Lazy sync` first, it overwrites the lockfile); treesitter parsers and Mason binaries self-install separately and are never synced between machines; bare Linux boxes usually lack a C compiler for treesitter, so install the portable `zig` binary rather than `build-essential` (see new task ticket 07).
+- [Changes View empty/conflict-state research](issues/08-changes-view-empty-states.md): a clean working tree doesn't blank the `git_status` view or leave a stale list — it relabels the root row to "GIT STATUS (working tree clean) for \<path\>" with zero rows beneath; unresolved merge conflicts get a dedicated conflict icon/highlight (`NeoTreeGitConflict`), never falling through to a generic "modified" status. No documented empty-state glue pattern exists — `before_render` and the internal `type = "message"` node convention are the closest reusable precedents if custom glue is wanted.
 
 ## Not yet specified
 
-- Whether Chrome Navigation Mode's window/pane-navigation keys should mirror the user's existing `~/.tmux.conf` bindings for muscle-memory consistency — not raised yet; sharpness depends on how much tmux is used alongside nvim-ide day to day.
-- True empty-state behavior of the Changes View (zero changed files, merge-conflict state) — ticket 01 confirmed `git_status` shows all changed files with status icons and no unstaged-only filter, but didn't cover what renders when there's nothing to show or a conflict is active.
+(no open fog right now — the frontier covers everything currently specifiable toward the destination)
 
 ## Out of scope
 
