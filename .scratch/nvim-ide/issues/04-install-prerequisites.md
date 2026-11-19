@@ -1,5 +1,5 @@
 Type: task
-Status: open
+Status: resolved
 
 ## Question
 
@@ -15,4 +15,4 @@ Verify each with its version command (`nvim --version`, `lazygit --version`, `rg
 
 ## Answer
 
-(record what was installed, versions, and the font/terminal confirmation here when done)
+Installed via Homebrew: Neovim 0.12.6, lazygit 0.66.3. `ripgrep` 14.1.1 was already present, no action needed. Installed the `font-jetbrains-mono-nerd-font` cask (ghostty had no explicit `font-family` set before this) and set `font-family = "JetBrainsMono Nerd Font Mono"` in `~/.config/ghostty/config`. Confirmed rendering by printing a line of sample Nerd Font glyphs (folder, git-branch, file, lua, check icons) directly to the terminal after a ghostty reload — user confirmed all icons rendered correctly, no boxes/blanks/placeholders.

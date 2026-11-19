@@ -16,3 +16,5 @@ Charting settled the leader key (`<Space>`) and that `which-key.nvim` provides d
 - Toggling Chrome Navigation Mode on/off
 
 Also decide how to avoid collisions with neo-tree's own default keymaps once ticket 01 (neo-tree dual-source research) reports what those are.
+
+Also decide, specifically for the Chrome Navigation Mode window/pane-navigation keys: should they mirror the user's existing `~/.tmux.conf` bindings for muscle-memory consistency, or follow their own independent scheme? Ask how much tmux is actually used alongside nvim-ide day to day before deciding.
