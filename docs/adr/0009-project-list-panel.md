@@ -1,0 +1,7 @@
+# Split the left column into the Sidebar and a persistent Project List panel
+
+Grilling ticket 05 looked for a key to open the Project switcher and found the original ask wanted it "toggleable in the bottom-left specifically" — not a floating picker invoked on demand. Switching Projects is frequent enough, and the Known Projects List small enough in practice, that a persistent, always-visible list beats a picker you have to summon: one keypress to focus it, one more to land on a Project, no fuzzy-search step in between.
+
+That list can't live inside the Sidebar itself without contradicting ADR-0003 (one view at a time, Tree View or Changes View) — showing it alongside either source would make the Sidebar two views again. Instead, the left column now has two stacked, independent zones: the Sidebar proper (unchanged from ADR-0003, dual-source, single view) on top, and a separate Project List panel beneath it, always visible regardless of which Sidebar view is active. ADR-0003's "not two always-visible panels" was about the Sidebar's own two sources, not a blanket rule on the whole left column, but it reads that way out of context — treat this ADR as the clarification.
+
+One consequence: the fzf-lua Project picker originally implied by charting is no longer needed. fzf-lua remains the picker library for everything else (file search, LSP references) per ADR-0004; Project switching just doesn't go through a picker anymore.

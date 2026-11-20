@@ -17,8 +17,12 @@ The persisted per-Project state restored when switching back to it: open buffers
 _Avoid_: workspace state, project state
 
 **Sidebar**:
-The single togglable panel on the left that shows exactly one of two views at a time: the Tree View or the Changes View.
+The togglable panel in the upper part of the left column that shows exactly one of two views at a time: the Tree View or the Changes View. Does not include the Project List panel, which is a separate, always-visible zone stacked beneath it.
 _Avoid_: file browser, git panel (neither names the fact it's one slot, not two)
+
+**Project List panel**:
+The persistent zone beneath the Sidebar listing every entry in the Known Projects List, for switching to one directly with a keypress — not a picker you summon, always visible regardless of which Sidebar view is active.
+_Avoid_: project switcher, project picker (both imply something invoked on demand, not an always-visible list)
 
 **Tree View**:
 The Sidebar view showing the Project's file tree.
