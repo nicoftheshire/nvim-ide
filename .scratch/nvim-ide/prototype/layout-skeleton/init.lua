@@ -81,6 +81,12 @@ require("lazy").setup({
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = { options = { mode = "buffers", diagnostics = "nvim_lsp" } },
   },
+  {
+    -- ADR-0006 already locks this in for inline hunk signs; added here so
+    -- the live-diff-gutter request can actually be seen, not just described.
+    "lewis6991/gitsigns.nvim",
+    opts = {},
+  },
 }, {
   root = data_root .. "/data/lazy",
 })
@@ -207,6 +213,18 @@ map("n", "<leader>tn", function()
   local n = tonumber(vim.fn.input("Terminal #: "))
   if n then get_term(n):toggle() end
 end, { desc = "Open terminal N" })
+
+-- <leader>b — Buffer group (surfaced by prototype feedback: bufferline shows
+-- open files, but ticket 05's scheme never covered navigating/closing them)
+map("n", "<leader>bn", "<cmd>bnext<cr>", { desc = "Next buffer" })
+map("n", "<leader>bp", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
+map("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Close buffer" })
+map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next buffer (quick)" })
+map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Previous buffer (quick)" })
+
+-- Save: plain :w already works; <C-s> added as a familiar IDE-style shortcut
+-- alongside it, not a replacement.
+map({ "n", "i" }, "<C-s>", "<cmd>w<cr>", { desc = "Save" })
 
 -- <leader>g — Git group
 map("n", "<leader>gg", function() get_term(99):toggle() end, { desc = "Open lazygit (stub terminal)" })
