@@ -44,3 +44,14 @@ Final scheme:
 Scope change: the Project switcher is no longer the fzf-lua picker originally implied by charting — it's the new, always-visible Project List panel (see ADR-0009), reached via `<leader>sp`. fzf-lua remains the picker library for everything else (file search, LSP references) per ADR-0004.
 
 Recorded via the domain-modeling pass: ADR-0008 (leader key), ADR-0009 (Project List panel split from the Sidebar), a clarifying addendum on ADR-0003, and GLOSSARY.md updates (narrowed `Sidebar` definition, new `Project List panel` term).
+
+**Addendum (prototype, ticket 06):** trying the scheme live surfaced a gap this ticket's original question missed entirely — nothing covered navigating or closing open files (buffers), or a quick save shortcut. Settled while prototyping:
+
+- **`<leader>b` — Buffer group** (new, same one-letter-per-concept convention as `s`/`t`/`g`):
+  - `bn` / `bp` — next / previous buffer
+  - `bd` — close the current buffer
+- **`<S-l>` / `<S-h>`** — quick buffer cycling without the leader, alongside `bn`/`bp`
+- **`<C-s>`** (normal and insert mode) — save, as a familiar IDE-style shortcut alongside plain `:w`
+- **`<leader>qq`** — quit everything at once (`:qa!`), added after discovering closing each Sidebar/panel/terminal window individually with `:q!` was painful
+
+See ticket 06 for the prototype that surfaced these and verified they work, including with a running terminal job.
