@@ -76,6 +76,11 @@ require("lazy").setup({
     "folke/which-key.nvim",
     opts = {},
   },
+  {
+    "akinsho/bufferline.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = { options = { mode = "buffers", diagnostics = "nvim_lsp" } },
+  },
 }, {
   root = data_root .. "/data/lazy",
 })
@@ -97,6 +102,8 @@ function ProjectPanel.render()
   for _, p in ipairs(ProjectPanel.projects) do
     table.insert(lines, "   " .. p)
   end
+  table.insert(lines, "")
+  table.insert(lines, " [<cr>] switch  [x] remove  [q] close")
   vim.api.nvim_buf_set_lines(ProjectPanel.buf, 0, -1, false, lines)
   vim.api.nvim_set_option_value("modifiable", false, { buf = ProjectPanel.buf })
 end
@@ -209,5 +216,9 @@ end, { desc = "Open neogit (stub)" })
 
 -- <leader>cn — Chrome Navigation Mode toggle
 map("n", "<leader>cn", toggle_chrome_nav_mode, { desc = "Toggle Chrome Navigation Mode" })
+
+-- <leader>qq — quit everything at once (surfaced by prototype feedback:
+-- closing each Sidebar/panel/terminal window individually was painful)
+map("n", "<leader>qq", "<cmd>qa!<cr>", { desc = "Quit everything" })
 
 vim.notify("nvim-ide layout prototype loaded. <C-j>ss = Sidebar, <C-j>sp = Project List panel, <C-j>tt = terminal.")
