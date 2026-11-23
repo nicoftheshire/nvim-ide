@@ -1,5 +1,5 @@
 Type: task
-Status: open
+Status: resolved
 
 ## Question
 
@@ -17,4 +17,6 @@ This is a HITL task since it requires an active SSH session to that machine, whi
 
 ## Answer
 
-(record what was installed, versions, and any distro-specific gotchas encountered here when done)
+Provisioned on Red Hat Enterprise Linux 8.10: Neovim 0.13.0, lazygit 0.66.3, ripgrep 16.0.0, `zig` 0.17.1 (per ticket 02's treesitter-compiler-fallback finding). `NVIM_APPNAME=nvim-ide` exported in both `~/.bashrc` and `~/.bash_profile` on that box — SSH opens a login shell, which reads `~/.bash_profile` (or `~/.profile`), not `~/.bashrc`; any shell opened after login (new tmux pane, etc.) reads `~/.bashrc` instead, so both needed the export to cover both cases. Repo cloned to `~/.config/nvim-ide`. No RHEL-specific gotchas surfaced.
+
+This machine is reached over SSH from a Windows VDI, using PowerShell as the SSH client — glyph rendering for the Nerd Font requirement happens client-side on that Windows machine, not on the Linux box itself (SSH only streams text). The current VDI is Windows 10 without Windows Terminal available, and is about to be replaced by a newly-provisioned Windows 11 VDI, so any font configuration done on it now would be lost. Deferred to [ticket 09](09-windows-vdi-nerd-font.md) rather than configured here.
