@@ -63,9 +63,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Plugins ---------------------------------------------------------------
--- The `<leader>`-prefixed keybinding scheme (ticket 12) and the rest of the
--- custom shell are deliberately not wired up here — the two standalone
--- fzf-lua keymaps below (file search, LSP references) don't depend on it.
+-- The Sidebar, Project List panel, terminal, and git/diff/graph stack are
+-- deliberately not wired up here yet (later tickets); the keybinding
+-- scheme (ticket 12) lives below, after plugin setup.
 require("lazy").setup({
   { -- Treesitter: parsing for highlighting, indentation, and text objects.
     "nvim-treesitter/nvim-treesitter",
@@ -142,11 +142,16 @@ require("lazy").setup({
       { "<C-p>", function() require("fzf-lua").files() end, desc = "Find files (fzf-lua)" },
     },
   },
-  { -- which-key: surfaces keybindings as they're typed. Base config only —
-    -- leader-group content comes in ticket 12.
+  { -- which-key: surfaces keybindings as they're typed. Individual leaf
+    -- mappings are picked up automatically from their own `desc`; only
+    -- multi-key prefixes need an explicit group label here (ticket 12).
     "folke/which-key.nvim",
     event = "VeryLazy",
-    opts = {},
+    opts = {
+      spec = {
+        { "<leader>b", group = "buffer" },
+      },
+    },
   },
   { -- bufferline: the open-files tab bar (ticket 12) — Neovim buffers, not
     -- Vim tabs, per ticket 06's finding.
@@ -165,17 +170,20 @@ require("lazy").setup({
 -- conventional UI-chrome navigation. Never affects text-editing modality.
 local chrome_nav = { mode = "vim" }
 
+local window_nav_keys = {
+  h = { rhs = "<C-w>h", desc = "Window left" },
+  j = { rhs = "<C-w>j", desc = "Window down" },
+  k = { rhs = "<C-w>k", desc = "Window up" },
+  l = { rhs = "<C-w>l", desc = "Window right" },
+}
+
 local function apply_chrome_nav_mode()
-  if chrome_nav.mode == "vim" then
-    vim.keymap.set("n", "<leader>h", "<C-w>h", { desc = "Window left" })
-    vim.keymap.set("n", "<leader>j", "<C-w>j", { desc = "Window down" })
-    vim.keymap.set("n", "<leader>k", "<C-w>k", { desc = "Window up" })
-    vim.keymap.set("n", "<leader>l", "<C-w>l", { desc = "Window right" })
-  else
-    pcall(vim.keymap.del, "n", "<leader>h")
-    pcall(vim.keymap.del, "n", "<leader>j")
-    pcall(vim.keymap.del, "n", "<leader>k")
-    pcall(vim.keymap.del, "n", "<leader>l")
+  for key, map in pairs(window_nav_keys) do
+    if chrome_nav.mode == "vim" then
+      vim.keymap.set("n", "<leader>" .. key, map.rhs, { desc = map.desc })
+    else
+      pcall(vim.keymap.del, "n", "<leader>" .. key)
+    end
   end
 end
 
