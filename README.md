@@ -29,9 +29,13 @@ bare Linux box, install a standalone `zig` binary as the fallback instead of a
 distro compiler toolchain.
 
 Prerequisites to confirm on each machine before relying on nvim-ide there:
-Neovim, `lazygit`, `ripgrep`, and an active Nerd Font (glyph rendering is a
-client-side concern on whatever terminal is used, including when SSH'ing into
-a remote box).
+Neovim, `lazygit`, `ripgrep`, `fzf` (shelled out to by fzf-lua, ADR-0004), and
+an active Nerd Font (glyph rendering is a client-side concern on whatever
+terminal is used, including when SSH'ing into a remote box). Java's LSP
+server (`jdtls`) additionally needs a recent JDK on `PATH` or `JAVA_HOME` —
+the Mason-installed `jdtls` build's floor moves with each release (its own
+launcher enforces at least Java 21, but the OSGi bundles it currently ships
+needed Java 25 in practice as of this writing; verified working with 27).
 
 ## Startup Budget
 

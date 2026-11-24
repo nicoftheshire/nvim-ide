@@ -12,6 +12,12 @@
 
 vim.g.have_nerd_font = true
 
+-- ADR-0008: leader is <C-j>, mirroring the user's tmux prefix. Set before
+-- any keymap uses <leader> (the keybinding scheme itself lives at the
+-- bottom of this file, after plugins are declared).
+vim.g.mapleader = vim.api.nvim_replace_termcodes("<C-j>", true, false, true)
+vim.g.maplocalleader = vim.g.mapleader
+
 vim.opt.number = true
 vim.opt.mouse = "a"
 vim.opt.showmode = false
@@ -57,8 +63,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Plugins ---------------------------------------------------------------
--- LSP servers (ticket 11), the keybinding scheme (ticket 12), and the rest
--- of the custom shell are deliberately not wired up here.
+-- The `<leader>`-prefixed keybinding scheme (ticket 12) and the rest of the
+-- custom shell are deliberately not wired up here — the two standalone
+-- fzf-lua keymaps below (file search, LSP references) don't depend on it.
 require("lazy").setup({
   { -- Treesitter: parsing for highlighting, indentation, and text objects.
     "nvim-treesitter/nvim-treesitter",
@@ -77,11 +84,63 @@ require("lazy").setup({
     "mason-org/mason.nvim",
     opts = {},
   },
-  { -- mason-lspconfig: bridges Mason-installed servers into vim.lsp.config.
-    -- Plumbing only here — no servers requested yet; that's ticket 11.
+  { -- mason-lspconfig: bridges Mason-installed servers into vim.lsp.config,
+    -- enabling via vim.lsp.enable (Neovim 0.11+), never the deprecated
+    -- require('lspconfig').X.setup{} form.
     "mason-org/mason-lspconfig.nvim",
     dependencies = { "mason-org/mason.nvim", "neovim/nvim-lspconfig" },
+    config = function()
+      -- lua_ls needs to know about `vim` globals when editing this config;
+      -- the other four baseline servers use their nvim-lspconfig defaults.
+      vim.lsp.config("lua_ls", {
+        settings = {
+          Lua = {
+            runtime = { version = "LuaJIT" },
+            workspace = {
+              checkThirdParty = false,
+              library = { vim.env.VIMRUNTIME },
+            },
+          },
+        },
+      })
+
+      require("mason-lspconfig").setup({
+        -- Baseline five (ADR: see spec's LSP baseline section). jdtls is
+        -- bare lspconfig only — no nvim-jdtls, debug adapter, or test
+        -- runner (explicitly deferred). Its JVM startup is excluded from
+        -- the Startup Budget by ADR-0007.
+        ensure_installed = { "lua_ls", "ts_ls", "pyright", "jdtls", "terraformls" },
+        automatic_enable = true,
+      })
+
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("nvim-ide-lsp-attach", { clear = true }),
+        callback = function(event)
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if not client then
+            return
+          end
+
+          if client:supports_method("textDocument/completion") then
+            vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
+          end
+
+          if client:supports_method("textDocument/references") then
+            vim.keymap.set("n", "grr", function()
+              require("fzf-lua").lsp_references()
+            end, { buffer = event.buf, desc = "LSP: [G]oto [R]eferences (fzf-lua)" })
+          end
+        end,
+      })
+    end,
+  },
+  { -- fzf-lua: the picker for file search and LSP references (ADR-0004) —
+    -- no native-compiled dependency, unlike telescope-fzf-native.
+    "ibhagwan/fzf-lua",
     opts = {},
+    keys = {
+      { "<C-p>", function() require("fzf-lua").files() end, desc = "Find files (fzf-lua)" },
+    },
   },
   { -- which-key: surfaces keybindings as they're typed. Base config only —
     -- leader-group content comes in ticket 12.
@@ -89,6 +148,55 @@ require("lazy").setup({
     event = "VeryLazy",
     opts = {},
   },
+  { -- bufferline: the open-files tab bar (ticket 12) — Neovim buffers, not
+    -- Vim tabs, per ticket 06's finding.
+    "akinsho/bufferline.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {},
+  },
 }, {
   install = { colorscheme = { "default" } },
 })
+
+-- Keybinding scheme (ticket 12) ---------------------------------------------
+
+-- Chrome Navigation Mode: toggle between vim-style (<leader> then h/j/k/l
+-- for window nav, mirroring the tmux prefix+hjkl gesture, ADR-0008) and
+-- conventional UI-chrome navigation. Never affects text-editing modality.
+local chrome_nav = { mode = "vim" }
+
+local function apply_chrome_nav_mode()
+  if chrome_nav.mode == "vim" then
+    vim.keymap.set("n", "<leader>h", "<C-w>h", { desc = "Window left" })
+    vim.keymap.set("n", "<leader>j", "<C-w>j", { desc = "Window down" })
+    vim.keymap.set("n", "<leader>k", "<C-w>k", { desc = "Window up" })
+    vim.keymap.set("n", "<leader>l", "<C-w>l", { desc = "Window right" })
+  else
+    pcall(vim.keymap.del, "n", "<leader>h")
+    pcall(vim.keymap.del, "n", "<leader>j")
+    pcall(vim.keymap.del, "n", "<leader>k")
+    pcall(vim.keymap.del, "n", "<leader>l")
+  end
+end
+
+apply_chrome_nav_mode()
+
+vim.keymap.set("n", "<leader>cn", function()
+  chrome_nav.mode = chrome_nav.mode == "vim" and "conventional" or "vim"
+  apply_chrome_nav_mode()
+  vim.notify("Chrome Navigation Mode: " .. chrome_nav.mode)
+end, { desc = "Toggle Chrome Navigation Mode" })
+
+-- <leader>b buffer group, plus <S-l>/<S-h> quick-cycling without the leader.
+vim.keymap.set("n", "<leader>bn", "<cmd>bnext<cr>", { desc = "Next buffer" })
+vim.keymap.set("n", "<leader>bp", "<cmd>bprevious<cr>", { desc = "Previous buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Close buffer" })
+vim.keymap.set("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next buffer (quick)" })
+vim.keymap.set("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Previous buffer (quick)" })
+
+-- Save: plain :w already works; <C-s> added as a familiar IDE-style
+-- shortcut alongside it, not a replacement.
+vim.keymap.set({ "n", "i" }, "<C-s>", "<cmd>w<cr>", { desc = "Save" })
+
+-- Quit everything at once, including any running terminal jobs.
+vim.keymap.set("n", "<leader>qq", "<cmd>qa!<cr>", { desc = "Quit everything" })
