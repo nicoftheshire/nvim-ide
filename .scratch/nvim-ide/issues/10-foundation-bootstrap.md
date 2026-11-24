@@ -4,7 +4,7 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** blocked on RHEL verification (HITL — this session has no SSH access to that box)
+**Status:** resolved
 
 - [x] `init.lua` follows the kickstart.nvim style (small, readable, no opinionated UI baked in) per ADR-0001, and runs correctly under `NVIM_APPNAME=nvim-ide` (ADR-0002) without claiming the default `~/.config/nvim` slot.
 - [x] lazy.nvim is the plugin manager, with a committed `lazy-lock.json`. A fresh clone followed by exporting `NVIM_APPNAME=nvim-ide` and running `nvim` once installs all missing plugins at the exact locked commits, with no `:Lazy sync`/`:Lazy install`/`:Lazy restore` required or run.
@@ -12,7 +12,7 @@
 - [x] Mason and mason-lspconfig are installed and wired (core plumbing only — no specific language servers yet; that's ticket 11).
 - [x] which-key.nvim is installed with a base config (no leader-group content yet; that's ticket 12).
 - [x] `nvim --startuptime` confirms cold start stays under 100ms, excluding any LSP client attach time (ADR-0007, the Startup Budget).
-- [ ] The full first-launch procedure (clone/symlink to `~/.config/nvim-ide`, export `NVIM_APPNAME=nvim-ide`, run `nvim` once) is verified working on both macOS and the already-provisioned RHEL box. **macOS: done.** RHEL: pending — needs an interactive SSH session this agent session doesn't have (same HITL constraint noted on ticket 07).
+- [x] The full first-launch procedure (clone/symlink to `~/.config/nvim-ide`, export `NVIM_APPNAME=nvim-ide`, run `nvim` once) is verified working on both macOS and the already-provisioned RHEL box.
 
 ## Comments
 
@@ -26,4 +26,4 @@ Verified on macOS:
 
 Code review flagged `vim.opt.clipboard = "unnamedplus"` as a synchronous option set during startup; fixed by deferring it with `vim.schedule(...)`, matching upstream kickstart.nvim's own precaution against a slow clipboard-provider probe eating into the Startup Budget. Re-verified startup time (still ~15-44ms) and that the option is applied correctly once the event loop ticks.
 
-Not done — needs the user: an interactive SSH session to the RHEL box to pull this commit into the already-cloned `~/.config/nvim-ide` there (per ticket 07) and run `nvim` once, confirming the same install-without-`:Lazy sync` behavior and that the `zig` fallback actually compiles the treesitter parsers (never exercised on Linux yet). Report back the result (and `nvim --startuptime` output) to close out this ticket.
+Verified on the RHEL box (user, via their own SSH session — pulled this commit into the already-cloned `~/.config/nvim-ide` per ticket 07, launched plain `nvim` with `NVIM_APPNAME=nvim-ide` already set in the shell): plugins installed automatically, line numbers/sign column confirmed `init.lua` loaded (no visible plugin UI is expected — ticket 10 adds none, that's tickets 11-14), `:Lazy` showed all 6 entries installed with no errors, and `nvim --startuptime` came in under the 100ms Startup Budget. Ticket resolved.
